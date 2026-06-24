@@ -22,6 +22,10 @@
     padding:44px 16px 40px;font-family:"IBM Plex Mono",monospace;color:var(--ink);
   }
   .stage{width:100%;max-width:640px;position:relative}
+  .intro{width:100%;max-width:600px;text-align:center;margin:0 auto 22px}
+  .intro h1{font-family:"VT323",monospace;font-size:32px;line-height:1.1;color:var(--p);
+    text-shadow:0 0 12px var(--p-glow);margin:0 0 10px;letter-spacing:.5px}
+  .intro p{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.55;color:#8c8576;margin:0}
   .hat{display:block;width:62%;max-width:360px;margin:0 auto -22px;position:relative;z-index:3;
        filter:drop-shadow(0 10px 14px rgba(0,0,0,.55))}
   .crt{position:relative;z-index:2;border-radius:30px;padding:26px 26px 64px;
@@ -80,6 +84,7 @@
   @media (max-width:480px){
     body{padding:24px 10px 28px}
     .stage{max-width:420px}
+    .intro h1{font-size:23px}.intro p{font-size:12px}
     .hat{width:70%;margin-bottom:-16px}
     .crt{padding:14px 13px 48px;border-radius:22px}
     .vp{padding:11px 11px 10px}
@@ -96,6 +101,10 @@
 </style>
 </head>
 <body>
+  <header class="intro">
+    <h1>See FINN trade. Catch new launches. Trade in the bot.</h1>
+    <p>FINNPUTER Terminal streams FINN's own wallet, fresh Bags launches and the day's biggest movers &mdash; live. Paste any mint to preview it; the full scan &amp; trading run in the Telegram bot.</p>
+  </header>
   <div class="stage">
     <svg class="hat" viewBox="0 0 360 150" aria-hidden="true">
       <defs><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1">

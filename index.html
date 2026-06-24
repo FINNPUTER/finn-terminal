@@ -134,18 +134,12 @@
       <div class="badge"><span class="led"></span><span class="brand">FINNPUTER</span></div>
       <div class="pwr"></div>
     </div>
-    <p class="note"><b>Demo feed.</b> Live data wires in from the bot's backend (Bags new-launch + trending streams, FINN's wallet watcher) — every new token auto-scanned.<br>The terminal he built, watching Bags so you don't have to.</p>
+    <p class="note"><b>LIVE.</b> LIVE and TREND stream real new Bags launches and movers, refreshed automatically. FINN shows FINN's own wallet trades the moment he makes them. SCAN previews a mint here — the full safety check runs in the bot.<br>The terminal he inspired — watching Bags so you don't have to.</p>
   </div>
 <script>
 (function(){
   var DATA = {
-    finn:[
-      {t:"buy", s:"FINN aped 4.20 SOL -> $GAS",   m:"low risk · LP locked", ok:true},
-      {t:"sell",s:"FINN sold 60% -> $RALPH",       m:"+212% realized"},
-      {t:"buy", s:"FINN aped 1.50 SOL -> $VVM",    m:"2 snipers flagged", ok:false},
-      {t:"sell",s:"FINN took profit -> $GAS",      m:"+88%"},
-      {t:"buy", s:"FINN aped 3.10 SOL -> $CMEM",   m:"low risk · mint revoked", ok:true}
-    ],
+    finn:[],
     live:[
       {tkr:"$PUTER", ago:"8s",  ok:true},
       {tkr:"$MOONZ", ago:"24s", ok:true},
@@ -197,27 +191,24 @@
   function show(tab){
     if(liveTimer){clearInterval(liveTimer);liveTimer=null;}
     current=tab;
-    if(tab==='finn') paint(DATA.finn.map(moveRow),true);
+    if(tab==='finn'){
+      if(DATA.finn && DATA.finn.length) paint(DATA.finn.map(moveRow),true);
+      else feedEl.innerHTML='<div class="row muted">watching FINN\'s wallet — his trades appear here the moment he makes them.</div><div class="row muted">linked: BTeqNydt…F1Hfaom · hat stays on.</div>';
+    }
     else if(tab==='live'){ paint(DATA.live.map(liveRow),true); startLive(); }
     else if(tab==='trend'){ feedEl.innerHTML='<div class="row muted">trending on Bags · last 24h</div>'+DATA.trend.map(trendRow).join(''); }
-    else feedEl.innerHTML='<div class="row muted">paste any Solana mint below — the terminal scans it.</div>';
+    else feedEl.innerHTML='<div class="row muted">paste any Solana mint below — preview here, full safety scan runs in the bot.</div>';
   }
 
   function startLive(){
-    if(reduce) return;
-    var pool=['$WAGMI','$PEPE2','$BONKR','$SOLAR','$FOMO','$YOLO','$CHAD','$NPC','$VIBE','$GIGA'];
+    if(liveTimer){clearInterval(liveTimer);liveTimer=null;}
+    if(!FEED_URL) return;
     liveTimer=setInterval(function(){
       if(current!=='live'||typing) return;
-      var tkr=pool[Math.floor(Math.random()*pool.length)];
-      var row=document.createElement('div'); row.className='row new';
-      row.innerHTML='<span class="launch">[NEW]</span> <span class="tkr">'+tkr+'</span> <span class="muted">now</span>  <span class="muted">scanning…</span>';
-      feedEl.insertBefore(row, feedEl.firstChild);
-      while(feedEl.children.length>14) feedEl.removeChild(feedEl.lastChild);
-      setTimeout(function(){
-        var ok=Math.random()>0.3;
-        row.innerHTML='<span class="launch">[NEW]</span> <span class="tkr">'+tkr+'</span> <span class="muted">3s</span>  '+(ok?BEANIE+'<span class="risk-ok">PASS</span>':'<span class="risk-bad">FLAG</span> <span class="muted">· high creator hold</span>');
-      },1400);
-    },4200);
+      fetch(FEED_URL).then(function(r){return r.json();}).then(function(d){
+        if(current==='live'&&d&&d.live&&d.live.length){ DATA.live=d.live; paint(DATA.live.map(liveRow),false); }
+      }).catch(function(){});
+    },20000);
   }
 
   function boot(){
@@ -240,15 +231,12 @@
 
   document.getElementById('cmd').addEventListener('submit',function(e){
     e.preventDefault(); var v=input.value.trim(); if(!v)return; input.value='';
-    feedEl.insertAdjacentHTML('beforeend','<div class="row"><span class="muted">scan&gt;</span> '+v.slice(0,18)+(v.length>18?'…':'')+'</div>');
-    var ok=v.length%3!==0;
+    feedEl.insertAdjacentHTML('beforeend','<div class="row"><span class="muted">scan&gt;</span> '+v.slice(0,20)+(v.length>20?'…':'')+'</div>');
     setTimeout(function(){
-      feedEl.insertAdjacentHTML('beforeend', ok
-        ? '<div class="row">'+BEANIE+'<span class="risk-ok">PASS</span> · LP locked · mint revoked · no bundles</div>'
-        : '<div class="row"><span class="risk-bad">x FLAG</span> · 2 snipers · creator holds 14% — be careful</div>');
-      feedEl.insertAdjacentHTML('beforeend','<div class="row muted">— demo verdict · real scan runs in the bot —</div>');
+      feedEl.insertAdjacentHTML('beforeend','<div class="row">'+BEANIE+'run the full safety scan on this mint in the bot:</div>');
+      feedEl.insertAdjacentHTML('beforeend','<div class="row"><a class="risk-ok" href="https://t.me/FinnputerTradeBot" target="_blank" rel="noopener">&rarr; t.me/FinnputerTradeBot</a></div>');
       feedEl.scrollTop=1e6;
-    },420);
+    },300);
     feedEl.scrollTop=1e6;
   });
   input.addEventListener('focus',function(){document.getElementById('cur').style.display='none';});

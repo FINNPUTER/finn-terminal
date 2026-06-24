@@ -70,8 +70,13 @@
   .led{width:9px;height:9px;border-radius:50%;background:var(--p);box-shadow:0 0 10px var(--p)}
   .pwr{position:absolute;right:26px;bottom:18px;width:34px;height:14px;border-radius:8px;
        background:linear-gradient(#2a2820,#0c0b08);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -2px 4px #000}
-  .note{margin-top:18px;text-align:center;font-size:12.5px;color:#6f6a5d;line-height:1.5}
+  .note{margin-top:18px;text-align:center;font-size:12.5px;color:#6f6a5d;line-height:1.75}
   .note b{color:#9c9586}
+  .note .sub{color:#5a564b}
+  .botcta{display:inline-block;margin-top:16px;padding:10px 20px;border:1px solid var(--p-dim);border-radius:8px;
+    color:var(--p);text-decoration:none;font-family:"VT323",monospace;font-size:21px;letter-spacing:.5px;
+    text-shadow:0 0 6px var(--p-glow);transition:background .15s ease,color .15s ease}
+  .botcta:hover,.botcta:focus-visible{background:var(--p);color:#04140b;outline:none}
   @media (max-width:480px){
     body{padding:24px 10px 28px}
     .stage{max-width:420px}
@@ -134,7 +139,14 @@
       <div class="badge"><span class="led"></span><span class="brand">FINNPUTER</span></div>
       <div class="pwr"></div>
     </div>
-    <p class="note"><b>LIVE.</b> LIVE and TREND stream real new Bags launches and movers, refreshed automatically. FINN shows FINN's own wallet trades the moment he makes them. SCAN previews a mint here — the full safety check runs in the bot.<br>The terminal he inspired — watching Bags so you don't have to.</p>
+    <div style="text-align:center"><a class="botcta" href="https://t.me/FinnputerTradeBot" target="_blank" rel="noopener">&#9654; open the bot &mdash; full scan &amp; trade</a></div>
+    <p class="note">
+      <b>FINN</b> — FINN's own wallet trades, the moment he makes them.<br>
+      <b>LIVE</b> — real new Bags launches as they mint.<br>
+      <b>TREND</b> — biggest movers on Bags, last 24h.<br>
+      <b>SCAN</b> — preview any mint here; the full safety scan runs in the bot.<br>
+      <span class="sub">The terminal he inspired — watching Bags so you don't have to.</span>
+    </p>
   </div>
 <script>
 (function(){
@@ -197,7 +209,9 @@
     }
     else if(tab==='live'){ paint(DATA.live.map(liveRow),true); startLive(); }
     else if(tab==='trend'){ feedEl.innerHTML='<div class="row muted">trending on Bags · last 24h</div>'+DATA.trend.map(trendRow).join(''); }
-    else feedEl.innerHTML='<div class="row muted">paste any Solana mint below — preview here, full safety scan runs in the bot.</div>';
+    else feedEl.innerHTML='<div class="row muted">paste any Solana mint below — preview here, full scan in the bot:</div>'
+      +'<div class="row">'+BEANIE+'LP lock · mint authority · bundles · sniper count · creator hold % · risk score</div>'
+      +'<div class="row"><a class="risk-ok" href="https://t.me/FinnputerTradeBot" target="_blank" rel="noopener">&rarr; run the full scan in the bot</a></div>';
   }
 
   function startLive(){

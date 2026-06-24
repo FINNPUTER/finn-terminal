@@ -26,6 +26,8 @@
   .intro h1{font-family:"VT323",monospace;font-size:32px;line-height:1.1;color:var(--p);
     text-shadow:0 0 12px var(--p-glow);margin:0 0 10px;letter-spacing:.5px}
   .intro p{font-family:"IBM Plex Mono",monospace;font-size:13px;line-height:1.55;color:#8c8576;margin:0}
+  .intro a{color:var(--p);text-decoration:none;border-bottom:1px solid var(--p-dim)}
+  .intro a:hover{border-bottom-color:var(--p)}
   .hat{display:block;width:62%;max-width:360px;margin:0 auto -22px;position:relative;z-index:3;
        filter:drop-shadow(0 10px 14px rgba(0,0,0,.55))}
   .crt{position:relative;z-index:2;border-radius:30px;padding:26px 26px 64px;
@@ -49,8 +51,8 @@
   .bar .dot{width:8px;height:8px;border-radius:50%;background:var(--p);box-shadow:0 0 8px var(--p);animation:pulse 1.6s infinite}
   @keyframes pulse{50%{opacity:.35}}
   .bar .sp{flex:1}.bar .mantra{font-size:16px;color:var(--p-dim)}
-  .tabs{display:flex;gap:5px;margin-bottom:8px;font-size:17px}
-  .tab{cursor:pointer;padding:1px 9px;border:1px solid var(--p-dim);border-radius:4px;color:var(--p-dim);
+  .tabs{display:flex;gap:6px;margin-bottom:9px;font-size:19px}
+  .tab{cursor:pointer;padding:3px 13px;border:1px solid var(--p-dim);border-radius:5px;color:var(--p-dim);
        background:transparent;font-family:inherit;text-shadow:none}
   .tab.on{color:#04140b;background:var(--p);box-shadow:0 0 10px var(--p-glow)}
   .tab:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
@@ -89,7 +91,7 @@
     .crt{padding:14px 13px 48px;border-radius:22px}
     .vp{padding:11px 11px 10px}
     .bar{font-size:16px}.bar .mantra{font-size:13px}
-    .tabs{font-size:14px;gap:4px}.tab{padding:1px 7px}
+    .tabs{font-size:16px;gap:5px}.tab{padding:2px 9px}
     .feed{font-size:17px;line-height:1.3}
     .cmd{font-size:17px}.cmd input{font-size:17px}
     .cur{height:15px}
@@ -103,7 +105,7 @@
 <body>
   <header class="intro">
     <h1>See FINN trade. Catch new launches. Trade in the bot.</h1>
-    <p>FINNPUTER Terminal streams FINN's own wallet, fresh Bags launches and the day's biggest movers &mdash; live. Paste any mint to preview it; the full scan &amp; trading run in the Telegram bot.</p>
+    <p>FINNPUTER Terminal streams FINN's own wallet, fresh <a href="https://bags.fm" target="_blank" rel="noopener">BAGS.FM</a> launches and the day's biggest movers &mdash; live. Paste any mint to preview it; the full scan &amp; trading run in the Telegram bot.</p>
   </header>
   <div class="stage">
     <svg class="hat" viewBox="0 0 360 150" aria-hidden="true">
@@ -151,10 +153,10 @@
     <div style="text-align:center"><a class="botcta" href="https://t.me/FinnputerTradeBot" target="_blank" rel="noopener">&#9654; open the bot &mdash; full scan &amp; trade</a></div>
     <p class="note">
       <b>FINN</b> — FINN's own wallet trades, the moment he makes them.<br>
-      <b>LIVE</b> — real new Bags launches as they mint.<br>
-      <b>TREND</b> — biggest movers on Bags, last 24h.<br>
+      <b>LIVE</b> — real new BAGS.FM launches as they mint.<br>
+      <b>TREND</b> — biggest movers on BAGS.FM, last 24h.<br>
       <b>SCAN</b> — preview any mint here; the full safety scan runs in the bot.<br>
-      <span class="sub">The terminal he inspired — watching Bags so you don't have to.</span>
+      <span class="sub">The terminal he inspired — watching BAGS.FM so you don't have to.</span>
     </p>
   </div>
 <script>
@@ -217,7 +219,7 @@
       else feedEl.innerHTML='<div class="row muted">watching FINN\'s wallet — his trades appear here the moment he makes them.</div><div class="row muted">linked: BTeqNydt…F1Hfaom · hat stays on.</div>';
     }
     else if(tab==='live'){ paint(DATA.live.map(liveRow),true); startLive(); }
-    else if(tab==='trend'){ feedEl.innerHTML='<div class="row muted">trending on Bags · last 24h</div>'+DATA.trend.map(trendRow).join(''); }
+    else if(tab==='trend'){ feedEl.innerHTML='<div class="row muted">trending on BAGS.FM · last 24h</div>'+DATA.trend.map(trendRow).join(''); }
     else feedEl.innerHTML='<div class="row muted">paste any Solana mint below — preview here, full scan in the bot:</div>'
       +'<div class="row">'+BEANIE+'LP lock · mint authority · bundles · sniper count · creator hold % · risk score</div>'
       +'<div class="row"><a class="risk-ok" href="https://t.me/FinnputerTradeBot" target="_blank" rel="noopener">&rarr; run the full scan in the bot</a></div>';
@@ -236,7 +238,7 @@
 
   function boot(){
     feedEl.innerHTML='';
-    var lines=['FINNPUTER TERMINAL v1.1','linked: BTeqNydt…F1Hfaom','watching Bags…','hat stays on.'];
+    var lines=['FINNPUTER TERMINAL v1.1','linked: BTeqNydt…F1Hfaom','watching BAGS.FM…','hat stays on.'];
     var i=0;(function s(){
       if(i>=lines.length){
         if(!FEED_URL){ show('finn'); return; }

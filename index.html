@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FINNPUTER TERMINAL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --case:#15140f; --case-hi:#26241b; --case-lo:#0b0a07;
+    --screen-bg:#04140b; --p:#4dffa0; --p-dim:#2a8f5c; --p-glow:rgba(77,255,160,.55);
+    --amber:#ffb43d; --red:#ff6363; --blue:#7fd0ff; --ink:#e8e4d8;
+    --hat:#d49a86; --hat-hi:#e7b8a6; --hat-lo:#b3735f; --hat-cuff:#cf9382;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%}
+  body{
+    background:radial-gradient(120% 90% at 50% 0%,#1c1b16 0%,#0a0a08 55%,#050504 100%);
+    min-height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:28px 16px 40px;font-family:"IBM Plex Mono",monospace;color:var(--ink);
+  }
+  .stage{width:100%;max-width:640px;position:relative}
+  .hat{display:block;width:62%;max-width:360px;margin:0 auto -22px;position:relative;z-index:3;
+       filter:drop-shadow(0 10px 14px rgba(0,0,0,.55))}
+  .crt{position:relative;z-index:2;border-radius:30px;padding:26px 26px 64px;
+    background:linear-gradient(180deg,var(--case-hi),var(--case) 26%,var(--case-lo));
+    box-shadow:inset 0 2px 0 rgba(255,255,255,.06),inset 0 -10px 24px rgba(0,0,0,.6),0 24px 60px rgba(0,0,0,.7);
+    border:1px solid #000;}
+  .crt::before{content:"";position:absolute;top:11px;left:50%;transform:translateX(-50%);
+    width:46px;height:6px;border-radius:6px;background:repeating-linear-gradient(90deg,#000 0 3px,transparent 3px 7px);opacity:.5;}
+  .screen{position:relative;border-radius:18px;overflow:hidden;aspect-ratio:4/3.2;
+    background:radial-gradient(120% 120% at 50% 42%,#0a2417 0%,var(--screen-bg) 70%,#020a06 100%);
+    box-shadow:inset 0 0 8px #000,inset 0 0 60px rgba(0,0,0,.85);border:2px solid #000;}
+  .screen::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:5;border-radius:18px;
+    background:radial-gradient(120% 120% at 50% 50%,transparent 60%,rgba(0,0,0,.55) 100%),
+      repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px);mix-blend-mode:multiply;}
+  .flick{position:absolute;inset:0;z-index:6;pointer-events:none;background:var(--p);opacity:0;animation:flick 7s steps(60) infinite}
+  @keyframes flick{0%,97%,100%{opacity:0}98%{opacity:.025}99%{opacity:.008}}
+  .vp{position:absolute;inset:0;z-index:4;padding:14px 15px 12px;display:flex;flex-direction:column;
+      font-family:"VT323",monospace;color:var(--p);text-shadow:0 0 6px var(--p-glow);letter-spacing:.5px}
+  .bar{display:flex;align-items:center;gap:8px;font-size:19px;line-height:1;border-bottom:1px solid var(--p-dim);
+       padding-bottom:7px;margin-bottom:7px;text-transform:uppercase}
+  .bar .dot{width:8px;height:8px;border-radius:50%;background:var(--p);box-shadow:0 0 8px var(--p);animation:pulse 1.6s infinite}
+  @keyframes pulse{50%{opacity:.35}}
+  .bar .sp{flex:1}.bar .mantra{font-size:16px;color:var(--p-dim)}
+  .tabs{display:flex;gap:5px;margin-bottom:8px;font-size:17px}
+  .tab{cursor:pointer;padding:1px 9px;border:1px solid var(--p-dim);border-radius:4px;color:var(--p-dim);
+       background:transparent;font-family:inherit;text-shadow:none}
+  .tab.on{color:#04140b;background:var(--p);box-shadow:0 0 10px var(--p-glow)}
+  .tab:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+  .feed{flex:1;overflow:auto;font-size:20px;line-height:1.32;padding-right:4px}
+  .feed::-webkit-scrollbar{width:6px}.feed::-webkit-scrollbar-thumb{background:var(--p-dim);border-radius:6px}
+  .row{margin:0 0 4px;white-space:pre-wrap;word-break:break-word}
+  .buy{color:var(--p)}.sell{color:var(--amber)}.launch{color:var(--blue);text-shadow:0 0 6px rgba(127,208,255,.5)}
+  .muted{color:var(--p-dim)}.risk-ok{color:var(--p)}.risk-bad{color:var(--red);text-shadow:0 0 6px rgba(255,99,99,.5)}
+  .rank{color:var(--p-dim)}.up{color:var(--p)}.tkr{color:var(--ink)}
+  .verify{display:inline-block;vertical-align:-2px;width:18px;height:13px;margin:0 2px}
+  .new{animation:pop .5s ease}@keyframes pop{from{opacity:0;transform:translateX(-6px)}to{opacity:1}}
+  .cmd{display:flex;align-items:center;gap:7px;border-top:1px solid var(--p-dim);margin-top:6px;padding-top:7px;font-size:20px}
+  .cmd .ps{color:var(--p)}
+  .cmd input{flex:1;background:transparent;border:0;outline:0;color:var(--p);font-family:"VT323",monospace;
+    font-size:20px;text-shadow:0 0 6px var(--p-glow);letter-spacing:.5px}
+  .cmd input::placeholder{color:var(--p-dim)}
+  .cur{width:9px;height:17px;background:var(--p);box-shadow:0 0 8px var(--p);animation:blink 1.05s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .badge{position:absolute;left:0;right:0;bottom:22px;display:flex;align-items:center;justify-content:center;gap:10px}
+  .brand{font-family:"VT323",monospace;font-size:24px;letter-spacing:3px;color:#8c8576;text-shadow:0 1px 0 #000}
+  .led{width:9px;height:9px;border-radius:50%;background:var(--p);box-shadow:0 0 10px var(--p)}
+  .pwr{position:absolute;right:26px;bottom:18px;width:34px;height:14px;border-radius:8px;
+       background:linear-gradient(#2a2820,#0c0b08);box-shadow:inset 0 1px 0 rgba(255,255,255,.08),inset 0 -2px 4px #000}
+  .note{margin-top:18px;text-align:center;font-size:12.5px;color:#6f6a5d;line-height:1.5}
+  .note b{color:#9c9586}
+  @media (prefers-reduced-motion:reduce){.flick,.bar .dot,.cur,.new{animation:none}}
+</style>
+</head>
+<body>
+  <div class="stage">
+    <svg class="hat" viewBox="0 0 360 150" aria-hidden="true">
+      <defs><linearGradient id="hg" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#e7b8a6"/><stop offset=".55" stop-color="#d49a86"/><stop offset="1" stop-color="#b3735f"/>
+      </linearGradient></defs>
+      <path d="M40 132 Q34 30 180 22 Q326 30 320 132 Z" fill="url(#hg)"/>
+      <g stroke="#b3735f" stroke-width="3" fill="none" opacity=".45" stroke-linecap="round">
+        <path d="M70 130 Q63 52 96 30"/><path d="M100 131 Q95 44 122 27"/><path d="M132 132 Q129 38 150 24"/>
+        <path d="M165 132 Q164 36 180 23"/><path d="M198 132 Q197 38 210 24"/><path d="M230 131 Q231 44 240 27"/>
+        <path d="M262 130 Q269 52 266 30"/><path d="M292 128 Q300 58 290 34"/>
+      </g>
+      <path d="M60 120 Q56 44 150 26 Q120 30 96 60 Q74 92 80 120 Z" fill="#fff" opacity=".10"/>
+      <rect x="22" y="112" width="316" height="36" rx="18" fill="#cf9382"/>
+      <rect x="22" y="112" width="316" height="36" rx="18" fill="none" stroke="#b3735f" stroke-width="2" opacity=".4"/>
+      <g stroke="#b3735f" stroke-width="3" opacity=".4" stroke-linecap="round">
+        <line x1="48" y1="118" x2="48" y2="142"/><line x1="74" y1="118" x2="74" y2="142"/><line x1="100" y1="118" x2="100" y2="142"/>
+        <line x1="126" y1="118" x2="126" y2="142"/><line x1="152" y1="118" x2="152" y2="142"/><line x1="178" y1="118" x2="178" y2="142"/>
+        <line x1="204" y1="118" x2="204" y2="142"/><line x1="230" y1="118" x2="230" y2="142"/><line x1="256" y1="118" x2="256" y2="142"/>
+        <line x1="282" y1="118" x2="282" y2="142"/><line x1="308" y1="118" x2="308" y2="142"/>
+      </g>
+    </svg>
+    <div class="crt">
+      <div class="screen">
+        <div class="flick"></div>
+        <div class="vp">
+          <div class="bar"><span class="dot"></span><span>FINNPUTER TERMINAL</span><span class="sp"></span><span class="mantra">terminal stays on</span></div>
+          <div class="tabs" role="tablist">
+            <button class="tab on" data-tab="finn" role="tab">FINN</button>
+            <button class="tab" data-tab="live" role="tab">LIVE</button>
+            <button class="tab" data-tab="trend" role="tab">TREND</button>
+            <button class="tab" data-tab="scan" role="tab">SCAN</button>
+          </div>
+          <div class="feed" id="feed"></div>
+          <form class="cmd" id="cmd" autocomplete="off">
+            <span class="ps">scan&gt;</span>
+            <input id="in" placeholder="paste a Solana mint…" aria-label="scan a token">
+            <span class="cur" id="cur"></span>
+          </form>
+        </div>
+      </div>
+      <div class="badge"><span class="led"></span><span class="brand">FINNPUTER</span></div>
+      <div class="pwr"></div>
+    </div>
+    <p class="note"><b>Demo feed.</b> Live data wires in from the bot's backend (Bags new-launch + trending streams, FINN's wallet watcher) — every new token auto-scanned.<br>The terminal he built, watching Bags so you don't have to.</p>
+  </div>
+<script>
+(function(){
+  var DATA = {
+    finn:[
+      {t:"buy", s:"FINN aped 4.20 SOL -> $GAS",   m:"low risk · LP locked", ok:true},
+      {t:"sell",s:"FINN sold 60% -> $RALPH",       m:"+212% realized"},
+      {t:"buy", s:"FINN aped 1.50 SOL -> $VVM",    m:"2 snipers flagged", ok:false},
+      {t:"sell",s:"FINN took profit -> $GAS",      m:"+88%"},
+      {t:"buy", s:"FINN aped 3.10 SOL -> $CMEM",   m:"low risk · mint revoked", ok:true}
+    ],
+    live:[
+      {tkr:"$PUTER", ago:"8s",  ok:true},
+      {tkr:"$MOONZ", ago:"24s", ok:true},
+      {tkr:"$RUGZ",  ago:"41s", ok:false, m:"creator holds 22%"},
+      {tkr:"$BEANIE",ago:"1m",  ok:true},
+      {tkr:"$DEGEN", ago:"2m",  ok:true}
+    ],
+    trend:[
+      {tkr:"$GAS",  chg:"+682%", vol:"$4.2M"},
+      {tkr:"$CMEM", chg:"+543%", vol:"$2.1M"},
+      {tkr:"$RALPH",chg:"+433%", vol:"$1.8M"},
+      {tkr:"$VVM",  chg:"+405%", vol:"$0.9M"},
+      {tkr:"$TERRA",chg:"+312%", vol:"$1.2M"}
+    ]
+  };
+  if(window.FINN_FEED){ DATA = window.FINN_FEED; }
+
+  // Point this at your deployed feed service to go live. Empty = demo data.
+  var FEED_URL = "https://finn-terminal-api-production.up.railway.app/feed";
+
+  var BEANIE='<svg class="verify" viewBox="0 0 36 26" aria-hidden="true"><path d="M5 22 Q4 5 18 4 Q32 5 31 22 Z" fill="#d49a86"/><rect x="2" y="18" width="32" height="7" rx="3.5" fill="#cf9382"/></svg>';
+  var feedEl=document.getElementById('feed'), input=document.getElementById('in');
+  var tabs=[].slice.call(document.querySelectorAll('.tab')), current='finn', typing=false, liveTimer=null;
+  var reduce = matchMedia('(prefers-reduced-motion:reduce)').matches;
+
+  function moveRow(it){
+    var cls=it.t==='buy'?'buy':it.t==='sell'?'sell':'launch';
+    var tag=it.t==='buy'?'BUY ':it.t==='sell'?'SELL':'LNCH';
+    var mark=it.ok===true?BEANIE:(it.ok===false?'<span class="risk-bad">x </span>':'');
+    var meta=it.m?'<span class="muted">  '+it.m+'</span>':'';
+    return '<div class="row"><span class="'+cls+'">['+tag+']</span> '+mark+it.s+meta+'</div>';
+  }
+  function liveRow(it){
+    var mark=it.ok===true?BEANIE+'<span class="risk-ok">PASS</span>':it.ok===false?'<span class="risk-bad">FLAG</span>':'<span class="muted">scanning…</span>';
+    var meta=it.m?'<span class="muted"> · '+it.m+'</span>':'';
+    return '<div class="row"><span class="launch">[NEW]</span> <span class="tkr">'+it.tkr+'</span> <span class="muted">'+it.ago+'</span>  '+mark+meta+'</div>';
+  }
+  function trendRow(it,i){
+    return '<div class="row"><span class="rank">'+(i+1)+'.</span> <span class="tkr">'+it.tkr+'</span>  <span class="up">'+it.chg+'</span> <span class="muted">'+it.vol+' vol</span></div>';
+  }
+
+  function paint(html,type){
+    feedEl.innerHTML='';
+    if(reduce||!type){ feedEl.innerHTML=html.join(''); feedEl.scrollTop=1e6; return; }
+    typing=true; var i=0;
+    (function n(){ if(i>=html.length){typing=false;return;} feedEl.insertAdjacentHTML('beforeend',html[i]); feedEl.scrollTop=1e6; i++; setTimeout(n,200); })();
+  }
+
+  function show(tab){
+    if(liveTimer){clearInterval(liveTimer);liveTimer=null;}
+    current=tab;
+    if(tab==='finn') paint(DATA.finn.map(moveRow),true);
+    else if(tab==='live'){ paint(DATA.live.map(liveRow),true); startLive(); }
+    else if(tab==='trend'){ feedEl.innerHTML='<div class="row muted">trending on Bags · last 24h</div>'+DATA.trend.map(trendRow).join(''); }
+    else feedEl.innerHTML='<div class="row muted">paste any Solana mint below — the terminal scans it.</div>';
+  }
+
+  function startLive(){
+    if(reduce) return;
+    var pool=['$WAGMI','$PEPE2','$BONKR','$SOLAR','$FOMO','$YOLO','$CHAD','$NPC','$VIBE','$GIGA'];
+    liveTimer=setInterval(function(){
+      if(current!=='live'||typing) return;
+      var tkr=pool[Math.floor(Math.random()*pool.length)];
+      var row=document.createElement('div'); row.className='row new';
+      row.innerHTML='<span class="launch">[NEW]</span> <span class="tkr">'+tkr+'</span> <span class="muted">now</span>  <span class="muted">scanning…</span>';
+      feedEl.insertBefore(row, feedEl.firstChild);
+      while(feedEl.children.length>14) feedEl.removeChild(feedEl.lastChild);
+      setTimeout(function(){
+        var ok=Math.random()>0.3;
+        row.innerHTML='<span class="launch">[NEW]</span> <span class="tkr">'+tkr+'</span> <span class="muted">3s</span>  '+(ok?BEANIE+'<span class="risk-ok">PASS</span>':'<span class="risk-bad">FLAG</span> <span class="muted">· high creator hold</span>');
+      },1400);
+    },4200);
+  }
+
+  function boot(){
+    feedEl.innerHTML='';
+    var lines=['FINNPUTER TERMINAL v1.1','linked: BTeqNydt…F1Hfaom','watching Bags…','terminal stays on.'];
+    var i=0;(function s(){
+      if(i>=lines.length){
+        if(!FEED_URL){ show('finn'); return; }
+        fetch(FEED_URL).then(function(r){return r.json();}).then(function(d){
+          if(d){ if(d.finn&&d.finn.length) DATA.finn=d.finn; if(d.live&&d.live.length) DATA.live=d.live; if(d.trend&&d.trend.length) DATA.trend=d.trend; }
+          show('finn');
+        }).catch(function(){ show('finn'); }); // backend down → demo data
+        return;
+      }
+      feedEl.insertAdjacentHTML('beforeend','<div class="row muted">'+lines[i]+'</div>'); i++; setTimeout(s,340);
+    })();
+  }
+
+  tabs.forEach(function(tb){ tb.addEventListener('click',function(){ if(typing)return; tabs.forEach(function(x){x.classList.remove('on')}); tb.classList.add('on'); show(tb.dataset.tab); }); });
+
+  document.getElementById('cmd').addEventListener('submit',function(e){
+    e.preventDefault(); var v=input.value.trim(); if(!v)return; input.value='';
+    feedEl.insertAdjacentHTML('beforeend','<div class="row"><span class="muted">scan&gt;</span> '+v.slice(0,18)+(v.length>18?'…':'')+'</div>');
+    var ok=v.length%3!==0;
+    setTimeout(function(){
+      feedEl.insertAdjacentHTML('beforeend', ok
+        ? '<div class="row">'+BEANIE+'<span class="risk-ok">PASS</span> · LP locked · mint revoked · no bundles</div>'
+        : '<div class="row"><span class="risk-bad">x FLAG</span> · 2 snipers · creator holds 14% — be careful</div>');
+      feedEl.insertAdjacentHTML('beforeend','<div class="row muted">— demo verdict · real scan runs in the bot —</div>');
+      feedEl.scrollTop=1e6;
+    },420);
+    feedEl.scrollTop=1e6;
+  });
+  input.addEventListener('focus',function(){document.getElementById('cur').style.display='none';});
+  input.addEventListener('blur',function(){document.getElementById('cur').style.display='block';});
+  boot();
+})();
+</script>
+</body>
+</html>
